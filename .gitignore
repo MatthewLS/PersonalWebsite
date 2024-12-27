@@ -1,6 +1,9 @@
 # Node modules
 /node_modules
 
+# Next build files
+/.next/
+
 # Distribution folder
 /dist
 
