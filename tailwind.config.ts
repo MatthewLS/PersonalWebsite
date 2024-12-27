@@ -8,6 +8,15 @@ export default {
   ],
   theme: {
     extend: {
+      animation: {
+        'gradient-text': 'gradient-text 5s linear infinite',
+      },
+      keyframes: {
+        'gradient-text': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '100%': { backgroundPosition: '200% 50%' },
+        },
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

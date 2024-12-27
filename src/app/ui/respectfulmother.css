@@ -1,0 +1,8 @@
+/* CSS Module Styles (e.g., styles.module.css) */
+.gradientText {
+  background-image: linear-gradient(to right, #007CF0, #00DFD8); /* Define your gradient colors and direction */
+  -webkit-background-clip: text; /* Clip the background to the text shape (webkit browsers) */
+  background-clip: text; /* Clip the background to the text shape (standard) */
+  color: transparent; /* Make the text itself transparent */
+  display: inline-block; /* Allows the element to take the size of its content */
+}
