@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import Image from 'next/image';
+
 
 const Blog = () => {
   const images = [
@@ -16,8 +18,10 @@ const Blog = () => {
 		  href={image.href}
 		  className="relative group transform hover:scale-110 hover:translate-y-[-10px] transition-all duration-300"
 		>
-		  <img
+		  <Image
 		    src={image.src}
+		    width={500}
+		    height={500}
 		    alt={image.alt}
 		    className="transition-all duration-500 group-hover w-64 h-64 object-cover rounded-xl shadow-lg group-hover:shadow-2xl"
 		  />
