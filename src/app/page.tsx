@@ -1,7 +1,5 @@
-import Image from "next/image";
 import Link from 'next/link';
 import { ultra } from '@/app/ui/fonts.ts'
-import {styles} from '@/app/ui/respectfulmother.css';
 
 export default function Home() {
   return (
