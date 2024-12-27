@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack://[project]/src/app/ui/respectfulmother.css"],"sourcesContent":["/* CSS Module Styles (e.g., styles.module.css) */\n.gradientText {\n  background-image: linear-gradient(to right, #007CF0, #00DFD8); /* Define your gradient colors and direction */\n  -webkit-background-clip: text; /* Clip the background to the text shape (webkit browsers) */\n  background-clip: text; /* Clip the background to the text shape (standard) */\n  color: transparent; /* Make the text itself transparent */\n  display: inline-block; /* Allows the element to take the size of its content */\n}\n"],"names":[],"mappings":"AACA"}},
-    {"offset": {"line": 8, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}
