@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ultra } from '@/app/ui/fonts.tsx'
+import { ultra } from '@/app/ui/fonts'
 
 export default function Home() {
   return (
