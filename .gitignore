@@ -39,3 +39,5 @@ Thumbs.db
 
 # Optional: Specific files you want to ignore
 # config/configuration.ts
+.vercel
+.env*.local

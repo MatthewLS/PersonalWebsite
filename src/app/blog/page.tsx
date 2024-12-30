@@ -1,31 +1,45 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { put } from "@vercel/blob";
+
 
 const Blog = () => {
-  const images = [
-    { src: '/TellyVia.jpg', href: '/post1', alt: 'Post 1' },
-    { src: '/TahoePier.jpg', href: '/post2', alt: 'Post 2' },
-    { src: '/GGBridge.jpg', href: '/post3', alt: 'Post 3' },
-    { src: '/kitchenCounter.jpg', href: '/post4', alt: 'Post 4' },
-  ];
+	const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    async function fetchImages() {
+      const res = await fetch('/api/list-blobs');
+      const data = await res.json();
+      
+      if (data.urls) {
+        setImages(data.urls);
+      } else {
+        console.error('Failed to fetch blob list:', data.error);
+      }
+    }
+    fetchImages();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-wrap justify-center items-center p-10">
-      {images.map((image, index) => (
+      {images.map((url, index) => (
         <Link
-		  key={index}
-		  href={image.href}
-		  className="relative group transform hover:scale-110 hover:translate-y-[-10px] transition-all duration-300"
-		>
-		  <Image
-		    src={image.src}
-		    width={500}
-		    height={500}
-		    alt={image.alt}
-		    className="transition-all duration-500 group-hover w-64 h-64 object-cover rounded-xl shadow-lg group-hover:shadow-2xl"
-		  />
-		</Link>
+          key={index}
+          href={`/post${index + 1}`} // Adjust your post URL structure if needed
+          className="relative group transform hover:scale-110 hover:translate-y-[-10px] transition-all duration-300"
+        >
+          <Image
+            src={url}
+            width={500}
+            height={500}
+            alt={`Post ${index + 1}`}
+            className="transition-all duration-500 group-hover w-64 h-64 object-cover rounded-xl shadow-lg group-hover:shadow-2xl"
+          />
+        </Link>
       ))}
     </div>
   );
