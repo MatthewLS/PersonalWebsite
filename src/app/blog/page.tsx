@@ -4,9 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { put } from "@vercel/blob";
-
-
 const Blog = () => {
 	const [images, setImages] = useState([]);
 
