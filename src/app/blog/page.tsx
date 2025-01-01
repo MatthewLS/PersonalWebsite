@@ -7,23 +7,23 @@ import Image from 'next/image';
 const Blog = () => {
   const [images, setImages] = useState([]);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const [proximities, setProximities] = useState({});
+  const [animationDelays, setAnimationDelays] = useState([]);
 
   useEffect(() => {
-  let animationFrameId;
+	  let animationFrameId;
 
-  const handleMouseMove = (e) => {
-    animationFrameId = requestAnimationFrame(() => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
-    });
-  };
+	  const handleMouseMove = (e) => {
+	    animationFrameId = requestAnimationFrame(() => {
+	      setCursorPos({ x: e.clientX, y: e.clientY });
+	    });
+	  };
 
-  window.addEventListener('mousemove', handleMouseMove);
-  return () => {
-    window.removeEventListener('mousemove', handleMouseMove);
-    cancelAnimationFrame(animationFrameId);
-  };
-}, []);
+	  window.addEventListener('mousemove', handleMouseMove);
+	  return () => {
+	    window.removeEventListener('mousemove', handleMouseMove);
+	    cancelAnimationFrame(animationFrameId);
+	  };
+  }, []);
 
 
   useEffect(() => {
@@ -33,6 +33,10 @@ const Blog = () => {
 
       if (data.urls) {
         setImages(data.urls);
+
+        // Generate random delays for each image
+        const delays = data.urls.map(() => Math.random() * 2); // Delay between 0 and 2 seconds
+        setAnimationDelays(delays);
       } else {
         console.error('Failed to fetch blob list:', data.error);
       }
@@ -58,8 +62,6 @@ const Blog = () => {
   return (
     <div className="min-h-screen flex flex-wrap justify-center items-center p-10 gap-12">
       {images.map((url, index) => {
-        const proximity = proximities[index] || 0;
-        console.log("proximity for index " + index + ": " + proximity);
         return (
           <Link
             key={index}
@@ -69,6 +71,7 @@ const Blog = () => {
             <div
               id={`image-${index}`}
               className="floating-image"
+              style={{ animationDelay: `${animationDelays[index]}s` }} // Apply the random delay
             >
               <Image
                 src={url}
@@ -87,6 +90,7 @@ const Blog = () => {
                   document.getElementById(`image-${index}`)
                 ) * 0.25})`,
               }}
+              
               />
             </div>
           </Link>
