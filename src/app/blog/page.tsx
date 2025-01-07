@@ -3,15 +3,48 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import {supabase} from '@/app/lib/supabaseClient'
 
 const Blog = () => {
-  const [images, setImages] = useState([]);
+  const [imageData, setImageData] = useState([]);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [animationDelays, setAnimationDelays] = useState([]);
 
   useEffect(() => {
-	  let animationFrameId;
+    const fetchArticlesData = async () => {
+      try {
+        // Fetch imageID of all images in position 1
+        const response = await fetch('/api/article-images');
+        if (!response.ok) throw new Error('Failed to fetch articles');
 
+        const data = await response.json();
+
+        const query = new URLSearchParams({
+          ids: data.article_images.map(image => image.imageId).join(','),
+        }).toString();
+
+        console.log('Query:', query);
+
+        // Fetch images using the constructed query
+        const imagesResponse = await fetch(`/api/get-images?${query}`);
+        if (!imagesResponse.ok) throw new Error('Failed to fetch images');
+
+        // Parse the imagesResponse JSON
+        const imagesData = await imagesResponse.json();
+
+        // Update state with the images
+        setImageData(imagesData.images); // Assuming the API returns { images: [...] }
+      } catch (err) {
+        console.error('Error fetching articles:', err);
+      }
+  };
+
+
+    fetchArticlesData();
+  }, []);
+
+  useEffect(() => {
+	  let animationFrameId;
 	  const handleMouseMove = (e) => {
 	    animationFrameId = requestAnimationFrame(() => {
 	      setCursorPos({ x: e.clientX, y: e.clientY });
@@ -23,25 +56,6 @@ const Blog = () => {
 	    window.removeEventListener('mousemove', handleMouseMove);
 	    cancelAnimationFrame(animationFrameId);
 	  };
-  }, []);
-
-
-  useEffect(() => {
-    async function fetchImages() {
-      const res = await fetch('/api/list-blobs');
-      const data = await res.json();
-
-      if (data.urls) {
-        setImages(data.urls);
-
-        // Generate random delays for each image
-        const delays = data.urls.map(() => Math.random() * 2); // Delay between 0 and 2 seconds
-        setAnimationDelays(delays);
-      } else {
-        console.error('Failed to fetch blob list:', data.error);
-      }
-    }
-    fetchImages();
   }, []);
 
   const calculateProximityEffect = (x, y, element) => {
@@ -58,10 +72,9 @@ const Blog = () => {
     return proximity;
   };
 
-
   return (
     <div className="min-h-screen flex flex-wrap justify-center items-center p-10 gap-12">
-      {images.map((url, index) => {
+      {imageData.map((imageData, index) => {
         return (
           <Link
             key={index}
@@ -74,7 +87,7 @@ const Blog = () => {
               style={{ animationDelay: `${animationDelays[index]}s` }} // Apply the random delay
             >
               <Image
-                src={url}
+                src={imageData.url}
                 width={500}
                 height={500}
                 alt={`Post ${index + 1}`}

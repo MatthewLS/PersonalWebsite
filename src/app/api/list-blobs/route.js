@@ -2,7 +2,6 @@
 import { list } from '@vercel/blob';
 
 export async function GET() {
-  console.log("Server-side log: API route hit!");
   try {
     const { blobs } = await list();
     const urls = blobs.map(blob => blob.url); // Extract public URLs from blobs
