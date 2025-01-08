@@ -1,5 +1,14 @@
 import {supabase} from '@/app/lib/supabaseClient';
 
+export interface ArticleImage {
+  imageId: string;
+  // Add other properties as needed
+}
+
+export interface ArticleImagesResponse {
+  article_images: ArticleImage[];
+}
+
 // obtain supabase image url's, coupled with their associated articleID
 export async function GET(request) {
   try {
