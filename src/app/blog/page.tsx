@@ -3,24 +3,35 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {supabase} from '@/app/lib/supabaseClient'
+import { supabase } from '@/app/lib/supabaseClient';
+import { ArticleImage, ArticleImagesResponse } from '@/app/api/article-images/types';
 
-const Blog = () => {
-  const [imageData, setImageData] = useState([]);
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const [animationDelays, setAnimationDelays] = useState([]);
+interface CursorPosition {
+  x: number;
+  y: number;
+}
+
+interface ImageData {
+  url: string;
+  // Add other properties as needed
+}
+
+const Blog: React.FC = () => {
+  const [imageData, setImageData] = useState<ImageData[]>([]); // Image data from the API
+  const [cursorPos, setCursorPos] = useState<CursorPosition>({ x: 0, y: 0 }); // Mouse cursor position
+  const [animationDelays, setAnimationDelays] = useState<number[]>([]); // Animation delays for images
 
   useEffect(() => {
-    const fetchArticlesData = async () => {
+    const fetchArticlesData = async (): Promise<void> => {
       try {
         // Fetch imageID of all images in position 1
         const response = await fetch('/api/article-images');
         if (!response.ok) throw new Error('Failed to fetch articles');
 
-        const data = await response.json();
+        const articleImagesResponse: ArticleImagesResponse = await response.json();
 
         const query = new URLSearchParams({
-          ids: data.article_images.map(image => image.imageId).join(','),
+          ids: articleImagesResponse.article_images.map((image: ArticleImage) => image.imageId).join(','),
         }).toString();
 
         console.log('Query:', query);
@@ -30,35 +41,34 @@ const Blog = () => {
         if (!imagesResponse.ok) throw new Error('Failed to fetch images');
 
         // Parse the imagesResponse JSON
-        const imagesData = await imagesResponse.json();
+        const imagesData: { images: ImageData[] } = await imagesResponse.json();
 
         // Update state with the images
         setImageData(imagesData.images); // Assuming the API returns { images: [...] }
       } catch (err) {
         console.error('Error fetching articles:', err);
       }
-  };
-
+    };
 
     fetchArticlesData();
   }, []);
 
   useEffect(() => {
-	  let animationFrameId;
-	  const handleMouseMove = (e) => {
-	    animationFrameId = requestAnimationFrame(() => {
-	      setCursorPos({ x: e.clientX, y: e.clientY });
-	    });
-	  };
+    let animationFrameId: number;
+    const handleMouseMove = (e: MouseEvent): void => {
+      animationFrameId = requestAnimationFrame(() => {
+        setCursorPos({ x: e.clientX, y: e.clientY });
+      });
+    };
 
-	  window.addEventListener('mousemove', handleMouseMove);
-	  return () => {
-	    window.removeEventListener('mousemove', handleMouseMove);
-	    cancelAnimationFrame(animationFrameId);
-	  };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
-  const calculateProximityEffect = (x, y, element) => {
+  const calculateProximityEffect = (x: number, y: number, element: HTMLElement | null): number => {
     if (!element) return 0;
 
     const rect = element.getBoundingClientRect();
@@ -75,6 +85,7 @@ const Blog = () => {
   return (
     <div className="min-h-screen flex flex-wrap justify-center items-center p-10 gap-12">
       {imageData.map((imageData, index) => {
+        const elementId = `image-${index}`;
         return (
           <Link
             key={index}
@@ -82,7 +93,7 @@ const Blog = () => {
             className="relative group transform transition-all duration-500"
           >
             <div
-              id={`image-${index}`}
+              id={elementId}
               className="floating-image"
               style={{ animationDelay: `${animationDelays[index]}s` }} // Apply the random delay
             >
@@ -93,17 +104,16 @@ const Blog = () => {
                 alt={`Post ${index + 1}`}
                 className="transition-all duration-500 w-64 h-64 object-cover rounded-xl shadow-lg"
                 style={{
-                transform: `translateY(-${calculateProximityEffect(
-                  cursorPos.x,
-                  cursorPos.y,
-                  document.getElementById(`image-${index}`)
-                ) * 10}px) scale(${1 + calculateProximityEffect(
-                  cursorPos.x,
-                  cursorPos.y,
-                  document.getElementById(`image-${index}`)
-                ) * 0.25})`,
-              }}
-              
+                  transform: `translateY(-${calculateProximityEffect(
+                    cursorPos.x,
+                    cursorPos.y,
+                    document.getElementById(elementId)
+                  ) * 10}px) scale(${1 + calculateProximityEffect(
+                    cursorPos.x,
+                    cursorPos.y,
+                    document.getElementById(elementId)
+                  ) * 0.25})`,
+                }}
               />
             </div>
           </Link>
@@ -114,7 +124,8 @@ const Blog = () => {
           animation: float 3s ease-in-out infinite;
         }
         @keyframes float {
-          0%, 100% {
+          0%,
+          100% {
             transform: translateY(0);
           }
           50% {
