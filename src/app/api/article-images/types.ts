@@ -6,5 +6,5 @@ export interface ArticleImage {
 }
 
 export interface ArticleImagesResponse {
-  article_images: ArticleImage[];
+  articleImages: ArticleImage[];
 }

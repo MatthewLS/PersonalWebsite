@@ -24,7 +24,7 @@ export async function GET(request: Request): Promise<Response> {
 
     console.log("TRANSFORMED DATA:", transformedData);
 
-    return new Response(JSON.stringify({ article_images: transformedData }), {
+    return new Response(JSON.stringify({ articleImages: transformedData }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

@@ -5,19 +5,24 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { supabase } from '@/app/lib/supabaseClient';
 import { ArticleImage, ArticleImagesResponse } from '@/app/api/article-images/types';
+import { GetImagesResponse } from '@/app/api/get-images/types';
 
 interface CursorPosition {
   x: number;
   y: number;
 }
 
-interface ImageData {
-  url: string;
-  // Add other properties as needed
+interface ImageMap {
+  [imageId: string]: {
+    articleId: string;
+    imageUrl: string;
+    altText: string;
+    slug: string;
+  };
 }
 
 const Blog: React.FC = () => {
-  const [imageData, setImageData] = useState<ImageData[]>([]); // Image data from the API
+  const [imageMap, setImageMap] = useState<ImageMap>({}); // Initialize as an object, not an array
   const [cursorPos, setCursorPos] = useState<CursorPosition>({ x: 0, y: 0 }); // Mouse cursor position
   const [animationDelays, setAnimationDelays] = useState<number[]>([]); // Animation delays for images
 
@@ -28,10 +33,25 @@ const Blog: React.FC = () => {
         const response = await fetch('/api/article-images');
         if (!response.ok) throw new Error('Failed to fetch articles');
 
+        const imageMapTemp: ImageMap = {}; // Temporary map to hold the data
         const articleImagesResponse: ArticleImagesResponse = await response.json();
+        
+        // Populate imageMapTemp with initial articleImage data
+        articleImagesResponse.articleImages.forEach((articleImage) => {
+          if (articleImage.imageId) {
+            imageMapTemp[articleImage.imageId] = {
+              articleId: articleImage.articleId,
+              imageUrl: '',
+              altText: '',
+              slug: '',
+            };
+          }
+        });
 
         const query = new URLSearchParams({
-          ids: articleImagesResponse.article_images.map((image: ArticleImage) => image.imageId).join(','),
+          ids: articleImagesResponse.articleImages
+            .map((image: ArticleImage) => image.imageId)
+            .join(','),
         }).toString();
 
         console.log('Query:', query);
@@ -41,10 +61,26 @@ const Blog: React.FC = () => {
         if (!imagesResponse.ok) throw new Error('Failed to fetch images');
 
         // Parse the imagesResponse JSON
-        const imagesData: { images: ImageData[] } = await imagesResponse.json();
+        const imagesData: { images: GetImagesResponse[] } = await imagesResponse.json();
 
-        // Update state with the images
-        setImageData(imagesData.images); // Assuming the API returns { images: [...] }
+        imagesData.images.forEach((image) => {
+          console.log("image: ", image);
+        })
+        
+
+        // Update imageMapTemp with the fetched image data
+        imagesData.images.forEach((image) => {
+          if (imageMapTemp[image.id]) {
+            imageMapTemp[image.id] = {
+              ...imageMapTemp[image.id],
+              imageUrl: image.url,
+              altText: image.altText,
+            };
+          }
+        });
+
+        // Update state with the final imageMap
+        setImageMap(imageMapTemp); // Update the imageMap state
       } catch (err) {
         console.error('Error fetching articles:', err);
       }
@@ -84,7 +120,7 @@ const Blog: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-wrap justify-center items-center p-10 gap-12">
-      {imageData.map((imageData, index) => {
+      {Object.values(imageMap).map((imageData, index) => {
         const elementId = `image-${index}`;
         return (
           <Link
@@ -98,10 +134,10 @@ const Blog: React.FC = () => {
               style={{ animationDelay: `${animationDelays[index]}s` }} // Apply the random delay
             >
               <Image
-                src={imageData.url}
+                src={imageData.imageUrl} // Use the slug or another appropriate field for the image URL
                 width={500}
                 height={500}
-                alt={`Post ${index + 1}`}
+                alt={imageData.altText || `Post ${index + 1}`}
                 className="transition-all duration-500 w-64 h-64 object-cover rounded-xl shadow-lg"
                 style={{
                   transform: `translateY(-${calculateProximityEffect(
