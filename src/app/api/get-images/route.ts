@@ -2,7 +2,7 @@ import { supabase } from '@/app/lib/supabaseClient';
 import { GetImagesResponse} from '@/app/api/get-images/types';
 
 // takes image table id's and obtains vercel image urls
-export async function GET(request) {
+export async function GET(request : Request) {
   try {
     // Parse the request URL and extract search params
     const { searchParams } = new URL(request.url);
@@ -46,11 +46,20 @@ export async function GET(request) {
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in GET /api/get-images:', error.message);
+    if (error instanceof Error) {
+      console.error('Error in GET /api/get-images:', error.message);
 
-    return new Response(
-      JSON.stringify({ success: false, error: error.message }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+      return new Response(
+        JSON.stringify({ success: false, error: error.message }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    } else {
+      console.error('Unknown error:', error);
+      return new Response(JSON.stringify({ error: 'An unknown error occurred' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    
   }
 }
