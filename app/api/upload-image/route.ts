@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as exifr from 'exifr';
 import { put } from '@vercel/blob'; // if you're using Vercel Blob SDK
+import { supabase } from '@/app/lib/supabaseClient';
+
+const folder = process.env.VERCEL_ENV === 'development' ? '' : 'prod-uploads';
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -20,25 +23,31 @@ export async function POST(req: NextRequest) {
 
   console.log('EXIF data:', exifData);
 
-
-  // Upload to Vercel Blob Storage
-  const blob = await put(file.name, buffer, {
-    access: 'public', // or 'private' depending on your use
+  const blob = await put(`${folder}/${file.name}`, buffer, {
+    access: 'public',
   });
 
-  // Save to your database
   const dbEntry = {
-    alt_text,
-    imageUrl: blob.url,
+    alt_text: alt_text,
+    url: blob.url,
     latitude: exifData?.latitude ?? null,
     longitude: exifData?.longitude ?? null,
-    uploadDate: new Date().toISOString(),
+    date: exifData?.DateTimeOriginal ?? null,
     camera_model: exifData?.Model ?? null,
+    lens_model: exifData?.LensModel ?? null,
     iso: exifData?.ISO ?? null,
-    shutterSpeed: exifData?.ExposureTime ?? null,
+    shutter_speed: exifData?.ExposureTime ?? null,
   };
 
   // TODO: Insert `dbEntry` into your DB here (e.g., Prisma, Drizzle, etc.)
+  const { data, error } = await supabase
+      .from('images')   // << Your table name
+      .insert(dbEntry)
+
+  if (error) {
+      console.error('Supabase insert error:', error);
+      return NextResponse.json({ error: 'Failed to save photo to database' }, { status: 500 });
+    }
 
   return NextResponse.json({ success: true, photo: dbEntry });
 }
