@@ -5,10 +5,10 @@ import { put } from '@vercel/blob'; // if you're using Vercel Blob SDK
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const file = formData.get('file') as File;
-  const title = formData.get('title') as string;
+  const alt_text = formData.get('alt_text') as string;
 
-  if (!file || !title) {
-    return NextResponse.json({ error: 'Missing file or title' }, { status: 400 });
+  if (!file || !alt_text) {
+    return NextResponse.json({ error: 'Missing file or alt_text' }, { status: 400 });
   }
 
   // Read the file into a buffer
@@ -20,14 +20,6 @@ export async function POST(req: NextRequest) {
 
   console.log('EXIF data:', exifData);
 
-  // Safe defaults
-  let latitude: number | null = null;
-  let longitude: number | null = null;
-
-  if (exifData?.latitude && exifData?.longitude) {
-    latitude = exifData.latitude;
-    longitude = exifData.longitude;
-  }
 
   // Upload to Vercel Blob Storage
   const blob = await put(file.name, buffer, {
@@ -36,14 +28,14 @@ export async function POST(req: NextRequest) {
 
   // Save to your database
   const dbEntry = {
-    title,
+    alt_text,
     imageUrl: blob.url,
-    latitude,
-    longitude,
+    latitude: exifData?.latitude ?? null,
+    longitude: exifData?.longitude ?? null,
     uploadDate: new Date().toISOString(),
-    // you could also save camera model, etc, if you want:
-    cameraModel: exifData?.Model || null,
-    shutterSpeed: exifData?.ExposureTime ? `${exifData.ExposureTime}s` : null,
+    camera_model: exifData?.Model ?? null,
+    iso: exifData?.ISO ?? null,
+    shutterSpeed: exifData?.ExposureTime ?? null,
   };
 
   // TODO: Insert `dbEntry` into your DB here (e.g., Prisma, Drizzle, etc.)

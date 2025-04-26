@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 export default function UploadPage() {
-  const [title, setTitle] = useState("");
+  const [altText, setAltText] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -15,12 +15,13 @@ export default function UploadPage() {
     }
 
     const formData = new FormData();
-    formData.append("title", title);
+    formData.append("alt_text", altText);
     formData.append("file", file);
+
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/upload", {
+      const res = await fetch("/api/upload-image", {
         method: "POST",
         body: formData,
       });
@@ -30,7 +31,7 @@ export default function UploadPage() {
       }
 
       alert("Upload successful!");
-      setTitle("");
+      setAltText("");
       setFile(null);
     } catch (err) {
       console.error(err);
@@ -38,6 +39,7 @@ export default function UploadPage() {
     } finally {
       setIsSubmitting(false);
     }
+    console.log("submitted!")
   };
 
   return (
@@ -46,9 +48,9 @@ export default function UploadPage() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-md">
         <input
           type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Description"
+          value={altText}
+          onChange={(e) => setAltText(e.target.value)}
           className="border p-2 rounded"
           required
         />
