@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { ultra } from '@/app/ui/fonts'
 import { motion } from "framer-motion";
 import FullscreenNav from "./components/FullscreenNav";
-import Spring from "./components/Spring";
 
 export default function Home() {
   return (
