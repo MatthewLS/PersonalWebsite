@@ -1,41 +1,54 @@
-import { POST } from './route';
-import { put } from '@vercel/blob';
-import { createClient } from '@supabase/supabase-js';
-import { describe, it, expect, vi } from 'vitest';
+import { createHandler } from './handler';
 import { NextRequest } from 'next/server';
+import { vi } from 'vitest';
 
-// Mock Blob Storage
-vi.mock('@vercel/blob', () => ({
-  put: vi.fn(),
-}));
+const mockExif ={ latitude: 1,
+                  longitude: 2,
+                  Model: "X-T3",
+                  LensModel: "XF35mmF2 R WR",
+                  ISO: 500,
+                  ExposureTime: 0.004,
+                  DateTimeOriginal: '2025-04-19T18:47:02.000Z',
+                  FNumber: 11
+                };
+const mockUrl = 'https://fake.blob/photo.jpg';
 
-// Mock Supabase
-vi.mock('@supabase/supabase-js', () => ({
-  createClient: vi.fn(() => ({
-    from: () => ({
-      insert: vi.fn(() => ({ data: { id: 1 }, error: null })),
-    }),
-  })),
-}));
+const handler = createHandler({
+  exifParser: vi.fn().mockResolvedValue(mockExif),
+  uploader: vi.fn().mockResolvedValue(mockUrl),
+  db: {
+    insert: vi.fn().mockResolvedValue({ data: {}, error: null }),
+  },
+});
 
-describe('Photo Upload API', () => {
-  it('uploads a photo and saves metadata', async () => {
-    // Create a mock FormData
-    const file = new File(['dummy content'], 'test.jpg', { type: 'image/jpeg' });
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('alt_text', 'A nice photo');
+// Create a mocked NextRequest and call handler(req) in your test
+var nextRequest = NextRequest()
 
-    const req = new NextRequest('http://localhost', { method: 'POST', body: formData });
+describe("POST handler", () => {
+  it("returns 400 if the alt_text or file is missing", () => {
+    var mockReq = {
+      formData: async () => new Map(),
+    } as unknown as NextRequest;
 
-    // Mock Blob upload
-    (put as any).mockResolvedValue({ url: 'https://example.com/test.jpg' });
+    const handler = createHandler({
+      exifParse: vi.fn(),
+      uploader: vi.fn(),
+      db: {insert: vi.fn()},
+    });
 
-    const response = await POST(req);
+    var res = await handler(mockReq);
+    expect(res.status).toBe(400);
 
-    const json = await response.json();
-    expect(json.success).toBe(true);
-    expect(json.photo.alt_text).toBe('A nice photo');
-    expect(json.photo.imageUrl).toBe('https://example.com/test.jpg');
+    mockReq = new FormData();
+    mockReq.append('alt_text' : "test")
+    res = await handler(mockReq);
+    expect(res.status).toBe(400);
+
+    mockReq = new FormData();
+    mockReq.append("file", new File(['test'], 'test.jpg', { type: 'image/jpeg'}));
+    res = await handler(mockReq);
+    expect(res.status).toBe(400);
   });
+
+  if("inserts co")
 });
