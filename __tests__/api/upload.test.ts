@@ -1,4 +1,4 @@
-import { createHandler } from './handler';
+import { createHandler } from './app/api/upload-image/handler';
 import { NextRequest } from 'next/server';
 import { vi } from 'vitest';
 
@@ -22,33 +22,46 @@ const handler = createHandler({
 });
 
 // Create a mocked NextRequest and call handler(req) in your test
-var nextRequest = NextRequest()
+const nextRequest = new NextRequest(mockUrl, {
+  method: 'POST',
+  body: JSON.stringify({ foo: 'bar' }),
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 describe("POST handler", () => {
-  it("returns 400 if the alt_text or file is missing", () => {
-    var mockReq = {
-      formData: async () => new Map(),
-    } as unknown as NextRequest;
-
-    const handler = createHandler({
-      exifParse: vi.fn(),
-      uploader: vi.fn(),
-      db: {insert: vi.fn()},
+  it("returns 400 if the alt_text and file is missing", async () => {
+    const form1 = new FormData();
+    const req1 = new Request(mockUrl, {
+      method: "POST",
+      body: form1,
     });
-
-    var res = await handler(mockReq);
-    expect(res.status).toBe(400);
-
-    mockReq = new FormData();
-    mockReq.append('alt_text' : "test")
-    res = await handler(mockReq);
-    expect(res.status).toBe(400);
-
-    mockReq = new FormData();
-    mockReq.append("file", new File(['test'], 'test.jpg', { type: 'image/jpeg'}));
-    res = await handler(mockReq);
+    const res = await handler(req1 as unknown as NextRequest);
     expect(res.status).toBe(400);
   });
 
-  if("inserts co")
+  it("returns 400 if the alt_text is missing", async () => {
+    var form2 = new FormData();
+    form2.append('alt_text', "test");
+    const req2 = new Request(mockUrl, {
+      method: "POST",
+      body: form2,
+    });
+    const res = await handler(req2);
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 if the file is missing", async () => {
+    var form3 = new FormData();
+    form3.append("file", new File(['test'], 'test.jpg', { type: 'image/jpeg'}));
+    const req3 = new Request(mockUrl, {
+      method: "POST",
+      body: form3,
+    })
+    const res = await handler(req3)
+    expect(res.status).toBe(400);
+  });
+
+  
 });
