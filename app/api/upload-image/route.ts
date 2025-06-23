@@ -3,7 +3,7 @@ import { put } from '@vercel/blob';
 import * as exifr from 'exifr';
 import { supabase } from '@/app/lib/supabaseClient';
 
-type ImageEntry = {
+export type ImageEntry = {
   alt_text: string;
   url: string;
   latitude: number | null;
@@ -13,6 +13,7 @@ type ImageEntry = {
   lens_model: string | null;
   iso: number | null;
   shutter_speed: number | null;
+  FNumber: number | null;
 };
 
 const uploader = async (filename: string, buffer: Buffer) => {
@@ -21,7 +22,10 @@ const uploader = async (filename: string, buffer: Buffer) => {
 };
 
 const db = {
-  insert: (entry: ImageEntry) => supabase.from('images').insert(entry),
+  insert: async (entry: ImageEntry) => {
+    const { data, error } = await supabase.from('images').insert([entry]);
+    return { data, error };
+  }
 };
 
 export const POST = createHandler({

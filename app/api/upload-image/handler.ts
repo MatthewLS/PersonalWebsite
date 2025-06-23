@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Buffer } from 'buffer';
+import { ImageEntry } from './route'
+import { PostgrestError } from '@supabase/supabase-js';
 
 
 type ExifData = {
@@ -9,14 +11,15 @@ type ExifData = {
   Model?: string;
   LensModel?: string;
   ISO?: number;
-  ExposureTime?: number
+  ExposureTime?: number;
+  FNumber?: number
 };
 
 type Dependencies = {
   exifParser: (buffer: Buffer) => Promise<ExifData>;
   uploader: (filename: string, buffer: Buffer) => Promise<string>;
   db: {
-    insert: (entry: Record<string, any>) => Promise<{data: any; error: any}>;
+    insert: (entry: ImageEntry) => Promise<{ data: null; error: PostgrestError | null; }>;
   };
 };
 
@@ -46,6 +49,7 @@ export function createHandler({ exifParser, uploader, db }: Dependencies) {
       lens_model: exifData?.LensModel ?? null,
       iso: exifData?.ISO ?? null,
       shutter_speed: exifData?.ExposureTime ?? null,
+      FNumber: exifData?.FNumber ?? null
     };
 
     const { data, error } = await db.insert(dbEntry);
