@@ -4,19 +4,19 @@ import { useState } from "react";
 
 export default function UploadPage() {
   const [altText, setAltText] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!file) {
-      alert("Please select a file.");
+    if (!imageFile) {
+      alert("Please select an image.");
       return;
     }
 
     const formData = new FormData();
     formData.append("alt_text", altText);
-    formData.append("file", file);
+    formData.append("file", imageFile);
 
 
     setIsSubmitting(true);
@@ -32,7 +32,7 @@ export default function UploadPage() {
 
       alert("Upload successful!");
       setAltText("");
-      setFile(null);
+      setImageFile(null);
     } catch (err) {
       console.error(err);
       alert("Something went wrong.");
@@ -57,7 +57,7 @@ export default function UploadPage() {
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          onChange={(e) => setImageFile(e.target.files?.[0] || null)}
           className="border p-2 rounded"
           required
         />
