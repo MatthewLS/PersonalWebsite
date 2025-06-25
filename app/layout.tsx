@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "My Creative Space",
-  description: "A gallery, blog, and live stream hub.",
+  title: "Respectful Mother",
+  description: "Gallery, Blog, etc.",
 };
 
 export default function RootLayout({
