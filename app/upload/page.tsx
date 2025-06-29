@@ -102,7 +102,15 @@ export default function UploadPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
       <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-xl">
-        <h1 className="text-3xl font-semibold text-center mb-6">Upload a Photo</h1>
+        <h1 className="text-3xl font-semibold text-center mb-6">Upload</h1>
+        {imageFile && (
+          <img
+            src={URL.createObjectURL(imageFile)}
+            alt={altText || "Preview"}
+            height={200}
+            className="flex justify-center mb-4 rounded "
+          />
+        )}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
