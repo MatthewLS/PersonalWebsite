@@ -84,6 +84,7 @@ export default function UploadPage() {
         ExposureTime: shutterSpeed,
         ISO: iso,
         FNumber: aperture,
+        DateTimeOriginal: date,
       } = output;
       console.log("exposureTime: 1/" + (1/Number(shutterSpeed)).toString())
       if (latitude != null) setLatitude(latitude.toString());
@@ -92,11 +93,8 @@ export default function UploadPage() {
       if (lensModel != null) setLensModel(lensModel);
       if (shutterSpeed != null) setShutterSpeed(exposureTimeToFraction(Number(shutterSpeed)))
       if (iso != null) setIso(iso.toString());
-      if (aperture != null) {
-        const formattedAperture = `f/${aperture}`;
-        setAperture(prev => prev + ` ${formattedAperture}`); // or setAperture(formattedAperture) if you have that field
-      }
-
+      if (aperture != null) setAperture(`f/${aperture}`);
+      if (date != null) setImageDate(new Date(date)); // Convert to JS Date object
     })
     console.log(exifData)
   }
