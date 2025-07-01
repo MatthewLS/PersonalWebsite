@@ -1,6 +1,6 @@
-import { createHandler } from './app/api/upload-image/handler';
+import { createHandler } from '@/app/api/upload-image/handler';
 import { NextRequest } from 'next/server';
-import { vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockExif ={ latitude: 1,
                   longitude: 2,
@@ -48,7 +48,7 @@ describe("POST handler", () => {
       method: "POST",
       body: form2,
     });
-    const res = await handler(req2);
+    const res = await handler(req2 as unknown as NextRequest);
     expect(res.status).toBe(400);
   });
 
@@ -59,7 +59,7 @@ describe("POST handler", () => {
       method: "POST",
       body: form3,
     })
-    const res = await handler(req3)
+    const res = await handler(req3 as unknown as NextRequest)
     expect(res.status).toBe(400);
   });
 

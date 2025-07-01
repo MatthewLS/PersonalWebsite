@@ -1,6 +1,5 @@
 import { createHandler } from './handler';
 import { put, PutBlobResult } from '@vercel/blob';
-import * as exifr from 'exifr';
 import { supabase } from '@/app/lib/supabaseClient';
 import { NextRequest, NextResponse } from 'next/server';
 
