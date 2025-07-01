@@ -18,10 +18,10 @@ export async function POST(req: NextRequest) {
   const shutterSpeed = formData.get('shutterSpeed') as string;
   const iso = formData.get('iso') as string;
   const aperture = formData.get('aperture') as string;
-  const date = formData.get('date') as string; // ISO format
+  const date = formData.get('date') as string;
   console.log("formData: ", formData);
+
   if (!file || !alt_text) {
-    console.log("Missing file or alt_text");
     return NextResponse.json({ error: 'Missing file or alt_text' }, { status: 400 });
   }
 
@@ -38,8 +38,6 @@ export async function POST(req: NextRequest) {
 } catch (error) {
   console.error('Error uploading file:', error);
 }
-
-  console.log("blob upload result: ", blob);
 
   const dbEntry = {
     alt_text: alt_text,
