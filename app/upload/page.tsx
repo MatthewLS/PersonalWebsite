@@ -16,7 +16,7 @@ export default function UploadPage() {
   const [lensModel, setLensModel] = useState("");
   const [iso, setIso] = useState("");
   const [shutterSpeed, setShutterSpeed] = useState("");
-  const [aperture, setAperture] = useState("");
+  const [aperture, setAperture] = useState<Number | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,8 +26,17 @@ export default function UploadPage() {
     }
 
     const formData = new FormData();
-    formData.append("alt_text", altText);
-    formData.append("file", imageFile);
+
+    if (latitude != null) formData.append("latitude", parseFloat(latitude).toFixed(3));
+    if (longitude != null) formData.append("longitude", parseFloat(longitude).toFixed(3));
+    if (cameraModel != null) formData.append("cameraModel", cameraModel);
+    if (lensModel != null) formData.append("lensModel", lensModel);
+    if (shutterSpeed != null) formData.append("shutterSpeed", shutterSpeed);
+    if (iso != null) formData.append("iso", iso.toString());
+    if (aperture != null) formData.append("aperture", aperture.toString());
+    if (imageDate != null) formData.append("date", new Date(imageDate).toISOString());
+    if (imageFile != null) formData.append("file", imageFile); // assuming imageFile is your actual File object
+    if (altText != null) formData.append("alt_text", altText);
 
 
     setIsSubmitting(true);
@@ -87,13 +96,13 @@ export default function UploadPage() {
         DateTimeOriginal: date,
       } = output;
       console.log("exposureTime: 1/" + (1/Number(shutterSpeed)).toString())
-      if (latitude != null) setLatitude(latitude.toString());
-      if (longitude != null) setLongitude(longitude.toString());
+      if (latitude != null) setLatitude((parseFloat(latitude)).toFixed(3));
+      if (longitude != null) setLongitude((parseFloat(longitude)).toFixed(3));
       if (cameraModel != null) setCameraModel(cameraModel);
       if (lensModel != null) setLensModel(lensModel);
       if (shutterSpeed != null) setShutterSpeed(exposureTimeToFraction(Number(shutterSpeed)))
       if (iso != null) setIso(iso.toString());
-      if (aperture != null) setAperture(`f/${aperture}`);
+      if (aperture != null) setAperture(aperture);
       if (date != null) setImageDate(new Date(date)); // Convert to JS Date object
     })
     console.log(exifData)
@@ -103,14 +112,16 @@ export default function UploadPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
       <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-xl">
         <h1 className="text-3xl font-semibold text-center mb-6">Upload</h1>
-        {imageFile && (
+        <div className="flex justify-center mb-4">
+          {imageFile && (
           <img
             src={URL.createObjectURL(imageFile)}
             alt={altText || "Preview"}
             height={200}
-            className="flex justify-center mb-4 rounded "
+            className="mb-4 rounded "
           />
-        )}
+          )}
+        </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
@@ -183,10 +194,10 @@ export default function UploadPage() {
             className="border border-gray-300 p-2 rounded-md"
           />
           <input
-            type="text"
+            type="number"
             placeholder="Aperture"
-            value={aperture}
-            onChange={(e) => setAperture(e.target.value)}
+            value={aperture?.toString() ?? ""}
+            onChange={(e) => setAperture(Number(e.target.value))}
             className="border border-gray-300 p-2 rounded-md"
           />
           <button
