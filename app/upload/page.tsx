@@ -16,7 +16,7 @@ export default function UploadPage() {
   const [lensModel, setLensModel] = useState("");
   const [iso, setIso] = useState("");
   const [shutterSpeed, setShutterSpeed] = useState("");
-  const [aperture, setAperture] = useState<Number | null>(null);
+  const [aperture, setAperture] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +33,25 @@ export default function UploadPage() {
     if (lensModel != null) formData.append("lensModel", lensModel);
     if (shutterSpeed != null) formData.append("shutterSpeed", shutterSpeed);
     if (iso != null) formData.append("iso", iso.toString());
-    if (aperture != null) formData.append("aperture", aperture.toString());
+    if (iso != null) {
+      const parsed = Number(iso);
+      if (!isNaN(parsed)) {
+        formData.append("iso", iso);
+      } else {
+        alert("Ensure ISO is a valid number")
+        throw new Error(`Invalid ISO value: "${iso}" is not a number`);
+      }
+    }
+    // if (aperture != null) {
+    //   const parsed = Math.floor(Number(aperture)/1);
+    //   if (!isNaN(parsed)) {
+    //     formData.append("aperture", aperture);
+    //   } else {
+    //     alert("Ensure Aperture is a valid number")
+    //     throw new Error(`Invalid aperture value: "${aperture}" is not a number`);
+    //   }
+    // }
+    
     if (imageDate != null) formData.append("date", new Date(imageDate).toISOString());
     if (imageFile != null) formData.append("file", imageFile); // assuming imageFile is your actual File object
     if (altText != null) formData.append("alt_text", altText);
@@ -194,10 +212,10 @@ export default function UploadPage() {
             className="border border-gray-300 p-2 rounded-md"
           />
           <input
-            type="number"
+            type="text"
             placeholder="Aperture"
-            value={aperture?.toString() ?? ""}
-            onChange={(e) => setAperture(Number(e.target.value))}
+            value={aperture}
+            onChange={(e) => setAperture(e.target.value)}
             className="border border-gray-300 p-2 rounded-md"
           />
           <button

@@ -1,5 +1,5 @@
 import { createHandler } from './handler';
-import { put, PutBlobResult } from '@vercel/blob';
+import { put, PutBlobResult, del } from '@vercel/blob';
 import { supabase } from '@/app/lib/supabaseClient';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -73,6 +73,13 @@ const db = {
 
   if (error) {
       console.error('Supabase insert error:', error);
+
+      console.log("attempting to delete uploaded vercel blob-image");
+      if (blob != null) {
+        await del(blob?.url)
+        console.log("deleted uploaded blob-image")
+      }
+
       return NextResponse.json({ error: 'Failed to save photo to database' }, { status: 500 });
     }
 
