@@ -32,13 +32,6 @@ export async function POST(req: NextRequest) {
   const date = formData.get('date') as string;
   console.log("formData: ", formData);
 
-const db = {
-  insert: async (entry: ImageEntry) => {
-    const { data, error } = await supabase.from('images').insert([entry]);
-    return { data, error };
-  }
-};
-
   // Read the file into a buffer
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
