@@ -8,7 +8,7 @@ export type ImageEntry = {
   url: string;
   latitude: number | null;
   longitude: number | null;
-  date: string | null;
+  image_date: string | null;
   camera_model: string | null;
   lens_model: string | null;
   iso: number | null;
@@ -29,8 +29,9 @@ export async function POST(req: NextRequest) {
   const shutterSpeed = formData.get('shutterSpeed') as string;
   const iso = formData.get('iso') as string;
   const aperture = formData.get('aperture') as string;
-  const date = formData.get('date') as string;
+  const image_date = formData.get('image_date') as string;
   console.log("formData: ", formData);
+  console.log("image_date: ", image_date);
 
   // Read the file into a buffer
   const arrayBuffer = await file.arrayBuffer();
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
 
   var blob: PutBlobResult | null = null;
   try {
-  blob = await put(`${file.webkitRelativePath}/${file.name}`, buffer, {
+  blob = await put(`Images/${file.name}`, buffer, {
     access: 'public',
   });
   console.log('Upload successful:', blob);
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
     url: blob?.url ?? null,
     latitude: latitude ?? null,
     longitude: longitude ?? null,
-    date: date ?? null,
+    image_date: image_date ?? null,
     camera_model: cameraModel ?? null,
     lens_model: lensModel ?? null,
     iso: iso ?? null,

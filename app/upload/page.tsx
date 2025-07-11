@@ -52,7 +52,7 @@ export default function UploadPage() {
     //   }
     // }
     
-    if (imageDate != null) formData.append("date", new Date(imageDate).toISOString());
+    if (imageDate != null) formData.append("image_date", new Date(imageDate).toISOString());
     if (imageFile != null) formData.append("file", imageFile); // assuming imageFile is your actual File object
     if (altText != null) formData.append("alt_text", altText);
 

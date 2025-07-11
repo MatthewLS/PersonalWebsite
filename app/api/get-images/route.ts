@@ -21,7 +21,7 @@ export async function GET(request : Request) {
     // Query Supabase for images
     const { data: images, error } = await supabase
       .from('images')
-      .select('url, alt_text, id')
+      .select('*')
       .in('id', ids);
 
     console.log('images response: ', images)
@@ -36,6 +36,7 @@ export async function GET(request : Request) {
       id: image.id,
       url: image.url,
       altText: image.alt_text,
+      created_at: image.created_at,
     }));
 
     console.log("Fetched images:", transformedData);

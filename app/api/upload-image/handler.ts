@@ -44,7 +44,7 @@ export function createHandler({ exifParser, uploader, db }: Dependencies) {
       url,
       latitude: exifData?.latitude ?? null,
       longitude: exifData?.longitude ?? null,
-      date: exifData?.DateTimeOriginal ?? null,
+      image_date: exifData?.DateTimeOriginal ?? null,
       camera_model: exifData?.Model ?? null,
       lens_model: exifData?.LensModel ?? null,
       iso: exifData?.ISO ?? null,
