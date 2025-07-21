@@ -1,25 +1,11 @@
 import { supabase } from '@/app/lib/supabaseClient';
 import { GetImagesResponse } from '@/app/api/get-images/types';
 import ImageCard from '@/app/components/ImageCard';
+import Link from 'next/link';
 
-// Move styles to a global CSS file or use <style jsx global>
-const floatingStyles = `
-@keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-12px); }
-        100% { transform: translateY(0px); }
-}
-.floating-card {
-        animation: float 3s ease-in-out infinite;
-        transition: transform 0.3s;
-}
-.floating-card:hover {
-        transform: scale(1.05) translateY(-16px);
-        z-index: 10;
-}
-`;
-
-export const dynamic = 'force-dynamic'; // Optional: ensures SSR
+type Props = {
+  searchParams?: Promise<{ page?: string }>;
+};
 
 const getImages = async (page: number = 1, limit: number = 12): Promise<GetImagesResponse[]> => {
   const from = (page - 1) * limit;
@@ -39,39 +25,67 @@ const getImages = async (page: number = 1, limit: number = 12): Promise<GetImage
   return data as GetImagesResponse[];
 };
 
+// ✅ This is the correct Server Component signature
+const GalleryPage = async ({ searchParams }: Props) => {
+  const params = await searchParams;
+  const page = parseInt(params?.page || '1');
+  const limit = 15;
+  const images = await getImages();
 
-const GalleryPage = async () => {
-        const images = await getImages();
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Gallery</h1>
 
-        return (
-                <div className="container mx-auto p-4">
-                        <style>{floatingStyles}</style>
-                        <h1 className="text-2xl font-bold mb-4">Gallery</h1>
-                        <div className="grid grid-cols-3 gap-8">
-                                {images.map((image, idx) => (
-                                        <div
-                                                key={image.id}
-                                                className="relative group floating-card p-10"
-                                                style={{ animationDelay: `${idx * 0.3}s` }}
-                                        >
-                                                <ImageCard 
-                                                        image={{
-                                                                url: image.url,
-                                                                alt_text: image.altText,
-                                                                camera_model: image.camera_model,
-                                                                lens_model: image.lens_model,
-                                                                iso: image.iso,
-                                                                shutter_speed: image.shutter_speed,
-                                                                aperture: image.aperture,
-                                                                upload_date: image.upload_date,
-                                                                image_date: image.image_date
-                                                        }}
-                                                />
-                                        </div>
-                                ))}
-                        </div>
-                </div>
-        );
-}
+      <div className="grid grid-cols-3 gap-8">
+        {images.map((image, idx) => (
+          <div
+            key={image.id}
+            className="relative group floating-card p-10"
+            style={{ animationDelay: `${idx * 0.3}s` }}
+          >
+            <ImageCard
+              image={{
+                url: image.url,
+                alt_text: image.altText,
+                camera_model: image.camera_model,
+                lens_model: image.lens_model,
+                iso: image.iso,
+                shutter_speed: image.shutter_speed,
+                aperture: image.aperture,
+                upload_date: image.upload_date,
+                image_date: image.image_date
+              }}
+              displayConfig={{
+                maxWidth: 300,
+                maxHeight: 200,
+                loadingPriority: idx < 6 ? 'eager' : 'lazy'
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="mt-10 flex justify-center gap-4">
+        {page > 1 && (
+          <Link
+            href={`?page=${page - 1}`}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Previous
+          </Link>
+        )}
+        {images.length === limit && (
+          <Link
+            href={`?page=${page + 1}`}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Next
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default GalleryPage;

@@ -1,15 +1,16 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+module.exports = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'your-vercel-blob-domain.com', // Replace with your blob domain
-        pathname: '/**', // Allow all paths
+        protocol: "https",
+        hostname: "9rqfeqtwbsb4tcsg.public.blob.vercel-storage.com",
+        pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "0ckitogcnpjjmwrn.public.blob.vercel-storage.com",
+        pathname: "/**",
+      }
     ],
   },
 };
-
-export default nextConfig;

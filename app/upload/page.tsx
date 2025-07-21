@@ -42,15 +42,15 @@ export default function UploadPage() {
         throw new Error(`Invalid ISO value: "${iso}" is not a number`);
       }
     }
-    // if (aperture != null) {
-    //   const parsed = Math.floor(Number(aperture)/1);
-    //   if (!isNaN(parsed)) {
-    //     formData.append("aperture", aperture);
-    //   } else {
-    //     alert("Ensure Aperture is a valid number")
-    //     throw new Error(`Invalid aperture value: "${aperture}" is not a number`);
-    //   }
-    // }
+    if (aperture != null) {
+      const parsed = Math.floor(Number(aperture)/1);
+      if (!isNaN(parsed)) {
+        formData.append("aperture", aperture);
+      } else {
+        alert("Ensure Aperture is a valid number")
+        throw new Error(`Invalid aperture value: "${aperture}" is not a number`);
+      }
+    }
     
     if (imageDate != null) formData.append("image_date", new Date(imageDate).toISOString());
     if (imageFile != null) formData.append("file", imageFile); // assuming imageFile is your actual File object
@@ -120,7 +120,13 @@ export default function UploadPage() {
       if (lensModel != null) setLensModel(lensModel);
       if (shutterSpeed != null) setShutterSpeed(exposureTimeToFraction(Number(shutterSpeed)))
       if (iso != null) setIso(iso.toString());
-      if (aperture != null) setAperture(aperture);
+      if (aperture != null) {
+        const parsed = Math.floor(Number(aperture)/1);
+        console.log("aperture: " + parsed)
+        if (!isNaN(parsed)) {
+          setAperture(parsed.toString())
+        }
+      }
       if (date != null) setImageDate(new Date(date)); // Convert to JS Date object
     })
     console.log(exifData)
