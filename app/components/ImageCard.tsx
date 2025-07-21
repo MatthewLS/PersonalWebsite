@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 
 type ImageData = {
@@ -11,6 +12,7 @@ type ImageData = {
 	shutter_speed?: string;
 	aperture?: string;
 	created_at: string; // ISO date string
+    image_date?: string; // ISO date string
 };
 
 type ImageCardProps = {
@@ -60,7 +62,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
                         fontSize: 14,
                     }}
                 >
-                    {image.alt_text && <div><strong>Alt Text:</strong> {image.alt_text}</div>}
+                    {image.alt_text && <div><strong> {image.alt_text}</strong></div>}
                     {image.camera_model && <div><strong>Camera Model:</strong> {image.camera_model}</div>}
                     {image.lens_model && <div><strong>Lens Model:</strong> {image.lens_model}</div>}
                     {image.latitude !== undefined && <div><strong>Latitude:</strong> {image.latitude}</div>}
@@ -68,7 +70,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image }) => {
                     {image.iso !== undefined && <div><strong>ISO:</strong> {image.iso}</div>}
                     {image.shutter_speed && <div><strong>Shutter Speed:</strong> {image.shutter_speed}</div>}
                     {image.aperture && <div><strong>Aperture:</strong> {image.aperture}</div>}
-                    {image.created_at && <div><strong>Created At:</strong> {image.created_at}</div>}
+                    {image.image_date && <div><strong>Image Date:</strong> {new Date(image.image_date).toISOString().slice(0, 10)}</div>}
                 </div>
             )}
         </div>
