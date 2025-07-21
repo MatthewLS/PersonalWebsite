@@ -21,18 +21,24 @@ const floatingStyles = `
 
 export const dynamic = 'force-dynamic'; // Optional: ensures SSR
 
-const getImages = async (): Promise<GetImagesResponse[]> => {
-        const { data, error } = await supabase
-                .from('images')
-                .select('*')
-                .order('created_at', { ascending: false });
+const getImages = async (page: number = 1, limit: number = 12): Promise<GetImagesResponse[]> => {
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
 
-        if (error) {
-                // Optionally handle/log error
-                return [];
-        }
-        return data as GetImagesResponse[];
+  const { data, error } = await supabase
+    .from('images')
+    .select('*')
+    .order('upload_date', { ascending: false })
+    .range(from, to);
+
+  if (error) {
+    console.error(error);
+    return [];
+  }
+
+  return data as GetImagesResponse[];
 };
+
 
 const GalleryPage = async () => {
         const images = await getImages();
@@ -57,7 +63,7 @@ const GalleryPage = async () => {
                                                                 iso: image.iso,
                                                                 shutter_speed: image.shutter_speed,
                                                                 aperture: image.aperture,
-                                                                created_at: image.created_at,
+                                                                upload_date: image.upload_date,
                                                                 image_date: image.image_date
                                                         }}
                                                 />

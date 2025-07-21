@@ -11,7 +11,7 @@ type ImageData = {
 	iso?: number;
 	shutter_speed?: string;
 	aperture?: string;
-	created_at: string; // ISO date string
+	upload_date: string; // ISO date string
     image_date?: string; // ISO date string
 };
 

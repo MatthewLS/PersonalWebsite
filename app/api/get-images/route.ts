@@ -36,7 +36,7 @@ export async function GET(request : Request) {
       id: image.id,
       url: image.url,
       altText: image.alt_text,
-      created_at: image.created_at,
+      upload_date: image.upload_date,
     }));
 
     console.log("Fetched images:", transformedData);
