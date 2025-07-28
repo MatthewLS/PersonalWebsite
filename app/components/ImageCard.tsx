@@ -17,8 +17,8 @@ type ImageData = {
 };
 
 type DisplayConfig = {
-  maxWidth: number;
-  maxHeight: number;
+  width: number;
+  height: number;
   loadingPriority: 'lazy' | 'eager';
 }
 
@@ -55,8 +55,8 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, displayConfig }) => {
       <Image
         src={image.url}
         alt={image.alt_text || ''}
-        width={300}
-        height={200}
+        width={displayConfig.width}
+        height={displayConfig.height}
         style={{ width: '100%', height: 'auto', display: 'block' }}
         sizes="300px"
         loading={displayConfig.loadingPriority}

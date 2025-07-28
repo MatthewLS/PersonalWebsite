@@ -10,8 +10,8 @@ export default function Home() {
     <div className="relative w-full h-screen bg-black text-white ultra">
       <FullscreenNav />
       <main className="flex items-center justify-center w-full h-screen animate-gradient-text">
-        <Link href='/blog' className={`${ultra.className} text-3xl `}>Respectful Mother</Link>
+        <Link href='/gallery' className={`${ultra.className} text-10xl `}>Respectful Mother</Link>
       </main>
     </div>
-    );
+  );
 };
