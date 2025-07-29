@@ -20,18 +20,11 @@ type DisplayConfig = {
   width: number;
   height: number;
   loadingPriority: 'lazy' | 'eager';
-}
+};
 
 type ImageCardProps = {
   image: ImageData;
-  displayConfig: DisplayConfig
-};
-
-const formatSize = (size?: number) => {
-  if (!size) return '';
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+  displayConfig: DisplayConfig;
 };
 
 const ImageCard: React.FC<ImageCardProps> = ({ image, displayConfig }) => {
@@ -41,7 +34,6 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, displayConfig }) => {
     <div
       style={{
         position: 'relative',
-        width: 300,
         border: '1px solid #ddd',
         borderRadius: 8,
         overflow: 'hidden',
@@ -57,7 +49,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, displayConfig }) => {
         alt={image.alt_text || ''}
         width={displayConfig.width}
         height={displayConfig.height}
-        style={{ width: '100%', height: 'auto', display: 'block' }}
+        style={{ height: 'auto', display: 'block' }}
         sizes="300px"
         loading={displayConfig.loadingPriority}
       />
@@ -74,7 +66,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, displayConfig }) => {
             fontSize: 14,
           }}
         >
-          {image.alt_text && <div><strong> {image.alt_text}</strong></div>}
+          {image.alt_text && <div><strong>{image.alt_text}</strong></div>}
           {image.camera_model && <div><strong>Camera Model:</strong> {image.camera_model}</div>}
           {image.lens_model && <div><strong>Lens Model:</strong> {image.lens_model}</div>}
           {image.latitude !== undefined && <div><strong>Latitude:</strong> {image.latitude}</div>}
