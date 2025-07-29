@@ -7,7 +7,7 @@ type Props = {
   searchParams?: Promise<{ page?: string }>;
 };
 
-const getImages = async (page: number = 1, limit: number = 12): Promise<GetImagesResponse[]> => {
+const getImages = async (page: number = 1, limit: number = 10): Promise<GetImagesResponse[]> => {
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
@@ -31,7 +31,7 @@ const GalleryPage = async ({ searchParams }: Props) => {
   const images = await getImages();
 
   return (
-    <div className="grid grid-cols-1 justify-items-center">
+    <div className="grid grid-cols-1 gap-8 justify-items-center">
       {images.map((image, idx) => (
         <div key={image.id} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
           <ImageCard

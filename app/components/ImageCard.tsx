@@ -32,6 +32,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, displayConfig }) => {
 
   return (
     <div
+      className="w-auto h-auto max-w-[90vw] max-h-[80vh]"
       style={{
         position: 'relative',
         border: '1px solid #ddd',
@@ -49,8 +50,8 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, displayConfig }) => {
         alt={image.alt_text || ''}
         width={displayConfig.width}
         height={displayConfig.height}
-        style={{ height: 'auto', display: 'block' }}
-        sizes="300px"
+        className="w-auto h-auto max-w-full max-h-[80vh] block"
+        sizes="(max-width: 768px) 90vw, 800px"
         loading={displayConfig.loadingPriority}
       />
       {hovered && (
