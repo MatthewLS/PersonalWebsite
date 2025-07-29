@@ -32,7 +32,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, displayConfig }) => {
 
   return (
     <div
-      className="w-auto h-auto max-w-[90vw] max-h-[80vh]"
+      className=""
       style={{
         position: 'relative',
         border: '1px solid #ddd',

@@ -31,9 +31,9 @@ const GalleryPage = async ({ searchParams }: Props) => {
   const images = await getImages();
 
   return (
-    <div className="grid grid-cols-1 gap-8 justify-items-center">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 justify-items-center">
       {images.map((image, idx) => (
-        <div key={image.id} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
+        <div key={image.id} className="p-4 flex justify-center">
           <ImageCard
             image={{
               url: image.url,
