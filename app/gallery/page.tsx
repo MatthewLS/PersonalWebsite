@@ -3,10 +3,6 @@ import { GetImagesResponse } from '@/app/api/get-images/types';
 import ImageCard from '@/app/components/ImageCard';
 import Link from 'next/link';
 
-type Props = {
-  searchParams?: Promise<{ page?: string }>;
-};
-
 const getImages = async (page: number = 1, limit: number = 10): Promise<GetImagesResponse[]> => {
   const from = (page - 1) * limit;
   const to = from + limit - 1;
@@ -24,7 +20,13 @@ const getImages = async (page: number = 1, limit: number = 10): Promise<GetImage
   return data as GetImagesResponse[];
 };
 
-const GalleryPage = async ({ searchParams }: Props) => {
+type Props = {
+  searchParams?: Promise<{ page?: string }>;
+};
+
+const GalleryPage = async ({ searchParams }: {
+  searchParams?: Promise<{ page?: string }>;
+}) => {
   const params = await searchParams;
   const page = parseInt(params?.page || '1');
   const limit = 15;
@@ -34,24 +36,34 @@ const GalleryPage = async ({ searchParams }: Props) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4 justify-items-center">
       {images.map((image, idx) => (
         <div key={image.id} className="p-4 flex justify-center">
-          <ImageCard
-            image={{
-              url: image.url,
-              alt_text: image.altText,
-              camera_model: image.camera_model,
-              lens_model: image.lens_model,
-              iso: image.iso,
-              shutter_speed: image.shutter_speed,
-              aperture: image.aperture,
-              upload_date: image.upload_date,
-              image_date: image.image_date
+          <Link
+            href={{
+              pathname: `/gallery/${image.id}`,
+              query: { modal: 'true', imageUrl: image.url }
             }}
-            displayConfig={{
-              width: 500,
-              height: 500,
-              loadingPriority: idx < 6 ? 'eager' : 'lazy'
-            }}
-          />
+            as={`/gallery/${image.id}`}
+            shallow
+            className="no-underline"
+          >
+            <ImageCard
+              image={{
+                url: image.url,
+                alt_text: image.altText,
+                camera_model: image.camera_model,
+                lens_model: image.lens_model,
+                iso: image.iso,
+                shutter_speed: image.shutter_speed,
+                aperture: image.aperture,
+                upload_date: image.upload_date,
+                image_date: image.image_date
+              }}
+              displayConfig={{
+                width: 500,
+                height: 500,
+                loadingPriority: idx < 6 ? 'eager' : 'lazy'
+              }}
+            />
+          </Link>
         </div>
       ))}
     </div>
