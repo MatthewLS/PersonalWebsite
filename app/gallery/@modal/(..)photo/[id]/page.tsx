@@ -1,12 +1,12 @@
 import { supabase } from "@/app/lib/supabaseClient";
-import ModalClient from "./modalClient";
+import Modal from "./modalClient";
 
 export default async function ImageModal({
   params,
 }: {
-  params: Promise<{ imageId: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const imageId = (await params).imageId;
+  const imageId = (await params).id;
   const { data, error } = await supabase
     .from("images")
     .select("url")
@@ -17,6 +17,6 @@ export default async function ImageModal({
     console.error("Error fetching image:", error);
     return null; // or return a fallback modal
   }
-
-  return <ModalClient imageUrl={data.url} />;
+  console.log("modal is called: ", data.url);
+  return <Modal imageUrl={data.url} />;
 }
