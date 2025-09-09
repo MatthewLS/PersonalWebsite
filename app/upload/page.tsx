@@ -17,6 +17,7 @@ export default function UploadPage() {
   const [iso, setIso] = useState("");
   const [shutterSpeed, setShutterSpeed] = useState("");
   const [aperture, setAperture] = useState("");
+  const [keywords, setKeywords] = useState(Array<string>);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +44,7 @@ export default function UploadPage() {
       }
     }
     if (aperture != null) {
-      const parsed = Math.floor(Number(aperture)/1);
+      const parsed = Math.floor(Number(aperture) / 1);
       if (!isNaN(parsed)) {
         formData.append("aperture", aperture);
       } else {
@@ -51,10 +52,11 @@ export default function UploadPage() {
         throw new Error(`Invalid aperture value: "${aperture}" is not a number`);
       }
     }
-    
+
     if (imageDate != null) formData.append("image_date", new Date(imageDate).toISOString());
     if (imageFile != null) formData.append("file", imageFile); // assuming imageFile is your actual File object
     if (altText != null) formData.append("alt_text", altText);
+    if (keywords != null) formData.append("keywords", JSON.stringify(keywords));
 
 
     setIsSubmitting(true);
@@ -100,36 +102,43 @@ export default function UploadPage() {
 
 
     // Extract EXIF metadata
-    const exifData = await exifr.parse(buffer, { gps: true })
-    .then(output => {
-      console.log(output);
-      const {
-        latitude,
-        longitude,
-        Model: cameraModel,
-        LensModel: lensModel,
-        ExposureTime: shutterSpeed,
-        ISO: iso,
-        FNumber: aperture,
-        DateTimeOriginal: date,
-      } = output;
-      console.log("exposureTime: 1/" + (1/Number(shutterSpeed)).toString())
-      if (latitude != null) setLatitude((parseFloat(latitude)).toFixed(3));
-      if (longitude != null) setLongitude((parseFloat(longitude)).toFixed(3));
-      if (cameraModel != null) setCameraModel(cameraModel);
-      if (lensModel != null) setLensModel(lensModel);
-      if (shutterSpeed != null) setShutterSpeed(exposureTimeToFraction(Number(shutterSpeed)))
-      if (iso != null) setIso(iso.toString());
-      if (aperture != null) {
-        const parsed = Math.floor(Number(aperture)/1);
-        console.log("aperture: " + parsed)
-        if (!isNaN(parsed)) {
-          setAperture(parsed.toString())
+    const exifData = await exifr.parse(buffer, { gps: true, iptc: true, xmp: true })
+      .then(output => {
+        console.log(output);
+        const {
+          latitude,
+          longitude,
+          Model: cameraModel,
+          LensModel: lensModel,
+          ExposureTime: shutterSpeed,
+          ISO: iso,
+          FNumber: aperture,
+          DateTimeOriginal: date,
+          hierarchicalSubject: keywords
+        } = output;
+        console.log("exposureTime: 1/" + (1 / Number(shutterSpeed)).toString())
+        if (latitude != null) setLatitude((parseFloat(latitude)).toFixed(3));
+        if (longitude != null) setLongitude((parseFloat(longitude)).toFixed(3));
+        if (cameraModel != null) setCameraModel(cameraModel);
+        if (lensModel != null) setLensModel(lensModel);
+        if (shutterSpeed != null) setShutterSpeed(exposureTimeToFraction(Number(shutterSpeed)))
+        if (iso != null) setIso(iso.toString());
+        if (aperture != null) {
+          const parsed = Math.floor(Number(aperture) / 1);
+          console.log("aperture: " + parsed)
+          if (!isNaN(parsed)) {
+            setAperture(parsed.toString())
+          }
         }
-      }
-      if (date != null) setImageDate(new Date(date)); // Convert to JS Date object
-    })
-    console.log(exifData)
+        if (keywords != null) {
+          if (!Array.isArray(keywords)) {
+            setKeywords([keywords]);
+          } else {
+            setKeywords(keywords || []);
+          }
+        }
+        if (date != null) setImageDate(new Date(date)); // Convert to JS Date object
+      })
   }
 
   return (
@@ -138,12 +147,12 @@ export default function UploadPage() {
         <h1 className="text-3xl font-semibold text-center mb-6">Upload</h1>
         <div className="flex justify-center mb-4">
           {imageFile && (
-          <img
-            src={URL.createObjectURL(imageFile)}
-            alt={altText || "Preview"}
-            height={200}
-            className="mb-4 rounded "
-          />
+            <img
+              src={URL.createObjectURL(imageFile)}
+              alt={altText || "Preview"}
+              height={200}
+              className="mb-4 rounded "
+            />
           )}
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -222,6 +231,13 @@ export default function UploadPage() {
             placeholder="Aperture"
             value={aperture}
             onChange={(e) => setAperture(e.target.value)}
+            className="border border-gray-300 p-2 rounded-md"
+          />
+          <input
+            type="text"
+            placeholder="Keywords (comma separated)"
+            value={keywords.join(", ")}
+            onChange={(e) => setKeywords(e.target.value.split(",").map(kw => kw.trim()))}
             className="border border-gray-300 p-2 rounded-md"
           />
           <button
