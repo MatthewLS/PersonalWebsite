@@ -1,16 +1,16 @@
-// components/GalleryInfinite.tsx
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import ImageCard from '@/app/components/ImageCard';
 import { getImages } from '@/app/lib/getImage'
-import { GetImagesResponse } from '@/app/api/get-images/types';
+import { Database } from '@/app/types/supabase';
+type ImagesRow = Database['public']['Tables']['images']['Row'];
 
 const LIMIT = 5;
 
 export default function InfiniteGallery() {
-  const [images, setImages] = useState<GetImagesResponse[]>([]);
+  const [images, setImages] = useState<ImagesRow[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -65,17 +65,7 @@ export default function InfiniteGallery() {
             passHref
           >
             <ImageCard
-              image={{
-                url: image.url,
-                alt_text: image.altText,
-                camera_model: image.camera_model,
-                lens_model: image.lens_model,
-                iso: image.iso,
-                shutter_speed: image.shutter_speed,
-                aperture: image.aperture,
-                upload_date: image.upload_date,
-                image_date: image.image_date
-              }}
+              image={image}
               displayConfig={{
                 width: 500,
                 height: 500,

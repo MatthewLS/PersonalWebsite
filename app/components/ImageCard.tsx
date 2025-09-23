@@ -2,19 +2,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-type ImageData = {
-  url: string;
-  alt_text?: string;
-  camera_model?: string;
-  lens_model?: string;
-  latitude?: number;
-  longitude?: number;
-  iso?: number;
-  shutter_speed?: string;
-  aperture?: string;
-  upload_date: string; // ISO date string
-  image_date?: string; // ISO date string
-};
+import { Database } from '@/app/types/supabase';
+type ImageRow = Database['public']['Tables']['images']['Row'];
 
 type DisplayConfig = {
   width: number;
@@ -23,7 +12,7 @@ type DisplayConfig = {
 };
 
 type ImageCardProps = {
-  image: ImageData;
+  image: ImageRow;
   displayConfig: DisplayConfig;
 };
 

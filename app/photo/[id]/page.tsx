@@ -1,5 +1,4 @@
 import { supabase } from '@/app/lib/supabaseClient';
-import { GetImagesResponse } from '@/app/api/get-images/types';
 import Image from 'next/image';
 
 async function getImageUrl(id: string): Promise<string> {
@@ -14,7 +13,7 @@ async function getImageUrl(id: string): Promise<string> {
     return '';
   }
 
-  return (data as GetImagesResponse).url
+  return data.url
 }
 
 

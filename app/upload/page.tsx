@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import * as exifr from 'exifr';
+import Image from "next/image";
 
 export default function UploadPage() {
   const [altText, setAltText] = useState("");
@@ -100,9 +101,7 @@ export default function UploadPage() {
       return `1/${denominator}`;
     }
 
-
-    // Extract EXIF metadata
-    const exifData = await exifr.parse(buffer, { gps: true, iptc: true, xmp: true })
+    await exifr.parse(buffer, { gps: true, iptc: true, xmp: true })
       .then(output => {
         console.log(output);
         const {
@@ -147,11 +146,13 @@ export default function UploadPage() {
         <h1 className="text-3xl font-semibold text-center mb-6">Upload</h1>
         <div className="flex justify-center mb-4">
           {imageFile && (
-            <img
+            <Image
               src={URL.createObjectURL(imageFile)}
               alt={altText || "Preview"}
-              height={200}
-              className="mb-4 rounded "
+              height={300}
+              width={400}
+              style={{ objectFit: "contain", height: "300px", width: "100%" }}
+              className="mb-4 rounded"
             />
           )}
         </div>

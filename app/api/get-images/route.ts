@@ -1,8 +1,9 @@
 import { supabase } from '@/app/lib/supabaseClient';
-import { GetImagesResponse} from '@/app/api/get-images/types';
+import { Database } from '@/app/types/supabase';
+type GetImagesRow = Database['public']['Tables']['images']['Insert'];
 
 // takes image table id's and obtains vercel image urls
-export async function GET(request : Request) {
+export async function GET(request: Request) {
   try {
     // Parse the request URL and extract search params
     const { searchParams } = new URL(request.url);
@@ -32,10 +33,10 @@ export async function GET(request : Request) {
     }
 
     // Transform the data
-    const transformedData: GetImagesResponse[] = images.map(image => ({
+    const transformedData: GetImagesRow[] = images.map(image => ({
       id: image.id,
       url: image.url,
-      altText: image.alt_text,
+      alt_text: image.alt_text,
       upload_date: image.upload_date,
     }));
 
@@ -61,6 +62,6 @@ export async function GET(request : Request) {
         headers: { 'Content-Type': 'application/json' },
       });
     }
-    
+
   }
 }

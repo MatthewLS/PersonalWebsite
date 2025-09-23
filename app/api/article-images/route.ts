@@ -1,5 +1,6 @@
 import { supabase } from '@/app/lib/supabaseClient';
-import {ArticleImage, ArticleImagesResponse } from '@/app/api/article-images/types';
+import { Database } from '@/app/types/supabase';
+type ArticleImagesRow = Database['public']['Tables']['article_images']['Insert'];
 
 // obtain supabase image URLs, coupled with their associated articleID
 export async function GET(request: Request): Promise<Response> {
@@ -16,10 +17,9 @@ export async function GET(request: Request): Promise<Response> {
       throw new Error(error.message);
     }
 
-    // Transform the data to match the desired response format
-    const transformedData: ArticleImage[] = (articles || []).map(article => ({
-      articleId: article.article_id,  // Renaming `article_id` to `articleId`
-      imageId: article.image_id,      // Renaming `image_id` to `imageId`
+    const transformedData: ArticleImagesRow[] = (articles || []).map(article => ({
+      article_id: article.article_id,
+      image_id: article.image_id,
     }));
 
     console.log("TRANSFORMED DATA:", transformedData);

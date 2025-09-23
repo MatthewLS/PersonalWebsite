@@ -1,11 +1,13 @@
 // lib/getImages.ts
 import { supabase } from '@/app/lib/supabaseClient';
-import { GetImagesResponse } from '@/app/api/get-images/types';
+import { Database } from '@/app/types/supabase';
+
+export type ImagesRow = Database['public']['Tables']['images']['Row'];
 
 export const getImages = async (
   page: number = 1,
   limit: number = 5
-): Promise<GetImagesResponse[]> => {
+): Promise<ImagesRow[]> => {
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
@@ -19,5 +21,5 @@ export const getImages = async (
     console.error(error);
     return [];
   }
-  return data as GetImagesResponse[];
+  return data;
 };
