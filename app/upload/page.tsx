@@ -34,7 +34,6 @@ export default function UploadPage() {
     if (cameraModel != null) formData.append("cameraModel", cameraModel);
     if (lensModel != null) formData.append("lensModel", lensModel);
     if (shutterSpeed != null) formData.append("shutterSpeed", shutterSpeed);
-    if (iso != null) formData.append("iso", iso.toString());
     if (iso != null) {
       const parsed = Number(iso);
       if (!isNaN(parsed)) {

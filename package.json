@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "supabase-gen": "supabase gen types typescript --local > ./app/types/supabase.ts"
+    "supabase-gen": "supabase gen types typescript --local > ./app/types/supabase.ts",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

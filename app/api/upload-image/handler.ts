@@ -36,7 +36,11 @@ export type Dependencies = {
 export function createHandler({ blobUploader, dbImageEntryUploader, dbImageTagsUploader }: Dependencies) {
   return async function handler(req: NextRequest) {
     const formData = await req.formData();
-    const file = formData.get('file') as File;
+    const file = formData.get('file');
+    if (!(file instanceof File)) {
+      return new Response(JSON.stringify({ error: "File is required" }), { status: 400 });
+    }
+
     const keywordsJson = formData.get("keywords");
 
     let keywords: string[] = [];
@@ -55,18 +59,21 @@ export function createHandler({ blobUploader, dbImageEntryUploader, dbImageTagsU
 
     try {
       const url = await blobUploader(file);
+      console.log("creating ImageEntry object")
       const imageRow = createImageRow(url, formData);
+      console.log("uploading DbImageEntry")
       const id = await dbImageEntryUploader(imageRow);
+      console.log("uploaded ImageEntry!")
       await dbImageTagsUploader(id, keywords);
     } catch (error) {
       if (error instanceof BlobUploadError) {
-        return NextResponse.json({ success: false, error: error.message }, { status: 501 });
+        return NextResponse.json({ success: false, error: error.message }, { status: 401 });
       } else if (error instanceof DbEntryUploadError) {
-        return NextResponse.json({ success: false, error: error.message }, { status: 502 });
+        return NextResponse.json({ success: false, error: error.message }, { status: 402 });
       } else if (error instanceof TagUploadError) {
-        return NextResponse.json({ success: false, error: error.message }, { status: 503 });
+        return NextResponse.json({ success: false, error: error.message }, { status: 403 });
       } else {
-        return NextResponse.json({ success: false, error: 'Unknown error occurred' }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Unknown error occurred' }, { status: 400 });
       }
     }
 
