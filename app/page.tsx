@@ -43,7 +43,7 @@ export default function Home() {
           />
         ))}
         <Link href='/gallery' style={{ zIndex: 1 }}>
-          <h1 className={`text-9xl ${ultra.className} text-center gradientText mt-40`}>
+          <h1 className={`text-[3rem] ${ultra.className} text-center gradientText mt-40 leading-none`}>
             Respectful Mother
           </h1>
         </Link>
